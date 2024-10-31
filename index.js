@@ -8,6 +8,10 @@ app.get("*", (req, res) => {
     const { url } = req;
     if (url.includes("favicon.ico")) {
         res.sendFile(path.join(__dirname, "/homepage/favicon.ico"));
+    } else if (url.includes("active-users")) {
+    } else if (url.includes("videos")) {
+    } else if (url.includes("leaderboards")) {
+    } else if (url.includes("changelog")) {
     } else {
         if (url) {
             res.sendFile(path.join(`${__dirname}/homepage/${url}`));
