@@ -1,0 +1,7 @@
+html, body {
+    padding: 0px;
+    margin: 0px;
+    user-select: none;
+    font-family: "Open Sans";
+    font-weight: 600;
+}
