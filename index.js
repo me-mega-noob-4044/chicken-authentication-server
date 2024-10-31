@@ -8,10 +8,12 @@ app.get("*", (req, res) => {
     const { url } = req;
     if (url.includes("favicon.ico")) {
         res.sendFile(path.join(__dirname, "/homepage/favicon.ico"));
-    } else if (url.includes("active-users")) {
-    } else if (url.includes("videos")) {
-    } else if (url.includes("leaderboards")) {
-    } else if (url.includes("changelog")) {
+    } else if (url.includes("active-users") || url.includes("videos") || url.includes("leaderboards") || url.includes("changelog")) {
+        if (url == "/changelog" || url == "/videos" || url == "/leaderboards"|| url == "/active-users") {
+            res.sendFile(path.join(`${__dirname}${url}/index.html`));
+        } else {
+            res.sendFile(path.join(`${__dirname}${url}`));
+        }
     } else {
         if (url) {
             res.sendFile(path.join(`${__dirname}/homepage/${url}`));
