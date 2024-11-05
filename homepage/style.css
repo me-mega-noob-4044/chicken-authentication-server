@@ -11,6 +11,7 @@ html, body {
     width: 80px;
     height: 80px;
     margin-left: 20px;
+    cursor: pointer;
 }
 
 .header {
@@ -20,6 +21,31 @@ html, body {
     height: 95px;
     width: 100%;
     background-color: rgba(202, 202, 0, 0.85);
+    z-index: 100000;
+}
+
+.sub-header-tab {
+    margin: 10px;
+    color: white;
+    font-weight: 900;
+    letter-spacing: 1;
+    cursor: pointer;
+    transition: all .4s;
+}
+
+.sub-header-tab:hover {
+    color: #d8d8d8;
+    font-size: 18px;
+}
+
+.sub-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(202, 202, 0, 0.55);
+    height: 45px;
+    width: 100%;
     z-index: 100000;
 }
 
@@ -91,7 +117,7 @@ html, body {
 
 .sub-text {
     position: relative;
-    font-weight: 200;
+    font-weight: 500;
     margin-top: -10px;
     font-size: 12px;
     color: white;

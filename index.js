@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const { mongoose } = require("mongoose");
 const path = require("path");
 
 const app = express();
@@ -17,8 +18,13 @@ app.get("*", (req, res) => {
             res.sendFile(path.join(`${__dirname}/homepage/index.html`));
         }
     }
-})
-
-app.listen(3030, () => {
-    console.log("Connected to localhost:3000");
 });
+
+(async () => {
+    await mongoose.connect(process.env.database_password);
+    console.log("Connected to database");
+
+    app.listen(3030, () => {
+        console.log("Connected to localhost:3000");
+    });
+})();
