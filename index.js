@@ -1,9 +1,30 @@
 require("dotenv").config();
 const express = require("express");
 const { mongoose } = require("mongoose");
+const UserProfile = require("./schema/UserProfile");
 const path = require("path");
 
 const app = express();
+
+async function getUsers(password) {
+    let users = await UserProfile.find({});
+
+    if (password != process.env.personalTokenPassword) {
+        users.forEach(user => {
+            user.personalAccessToken = "";
+        });
+    }
+    
+    return users;
+}
+
+app.get("/users*", async (req, res) => {
+    let { password } = req.query;
+
+    let users = await getUsers(password);
+
+    res.send(users);
+});
 
 app.get("*", (req, res) => {
     const { url } = req;

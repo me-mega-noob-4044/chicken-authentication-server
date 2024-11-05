@@ -1,4 +1,4 @@
-const { mongoose, Schema, model } = require('mongoose');
+const { mongoose, Schema, model } = require("mongoose");
 
 const userSchemaProfile = new Schema({
     userName: {
@@ -17,8 +17,9 @@ const userSchemaProfile = new Schema({
     accessDate: {
         type: Object
     },
-    isAdmin: {
-        type: Boolean
+    userRank: {
+        type: Number,
+        default: 0
     },
     personalAccessToken: {
         type: String
