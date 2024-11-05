@@ -12,11 +12,11 @@ function changeBG() {
         if (indx >= images.length) {
             indx = 0;
         }
-    }, 500);
+    }, 350);
 
     setTimeout(() => {
         bgImage.classList.remove("blink");
-    }, 1100);
+    }, 800);
 }
 
 setInterval(changeBG, 5000);
