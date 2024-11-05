@@ -7,18 +7,14 @@ const app = express();
 app.get("*", (req, res) => {
     const { url } = req;
     if (url.includes("favicon.ico")) {
-        res.sendFile(path.join(__dirname, "/homepage/favicon.ico"));
-    } else if (url.includes("active-users") || url.includes("videos") || url.includes("leaderboards") || url.includes("changelog")) {
-        if (url == "/changelog" || url == "/videos" || url == "/leaderboards"|| url == "/active-users") {
-            res.sendFile(path.join(`${__dirname}${url}/index.html`));
-        } else {
-            res.sendFile(path.join(`${__dirname}${url}`));
-        }
+        res.sendFile(path.join(`${__dirname}/homepage/favicon.ico`));
+    } else if (url.includes("assets")) {
+        res.sendFile(path.join(`${__dirname}${url}`));
     } else {
         if (url) {
             res.sendFile(path.join(`${__dirname}/homepage/${url}`));
         } else {
-            res.sendFile(path.join(__dirname + "/homepage/index.html"));
+            res.sendFile(path.join(`${__dirname}/homepage/index.html`));
         }
     }
 })
