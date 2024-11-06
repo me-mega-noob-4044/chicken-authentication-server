@@ -30,7 +30,9 @@ module.exports = async (req, callback) => {
             userName: data.username
         });
 
-        if (permanentUsers.includes(data.username)) {
+        // permanentUsers.includes(data.username) || 
+
+        if (userProfile) {
             if (typeof callback == "function") data = callback(data);
 
             if (!userProfile && permanentUsers.includes(data.username)) {
@@ -49,7 +51,9 @@ module.exports = async (req, callback) => {
 
             return data;
         } else {
-            return false;
+            data.notAUser = true;
+
+            return data;
         }
     } catch (e) {
         return false;
