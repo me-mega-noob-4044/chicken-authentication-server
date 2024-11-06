@@ -59,9 +59,14 @@ function generateSessionToken() {
     return encoder(result);
 }
 
+app.get("/login/todo", (req, res) => {
+    res.redirect("https://discord.com/oauth2/authorize?client_id=1178799009599598642&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3030%2Flogin%2Fcallback&scope=identify");
+});
+
 app.get("/login/callback*", async (req, res) => {
     let data = await verification(req, (result) => {
         if (typeof result == "object") {
+            // This will be used for quick authentication when the user tries to deploy chicken files into moomoo.io
             result.sessionToken = generateSessionToken();
 
             return result;

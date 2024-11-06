@@ -1,7 +1,5 @@
 import * as UTILS from "../src/config.js";
 
-const loginRedirect = "https://discord.com/oauth2/authorize?client_id=1178799009599598642&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3030%2Flogin%2Fcallback&scope=identify";
-
 var devauled = UTILS.devauleURL(location.search)?.data;
 
 if (typeof devauled == "string") {
@@ -15,9 +13,11 @@ window.history.replaceState({}, "", "login");
 if (localStorage.cached || devauled) {
     let data = (devauled || JSON.parse(localStorage.cached));
 
-    console.log(data);
+    localStorage.cached = JSON.stringify(data);
+
+    
 } else {
-    location.href = loginRedirect;
+    location.href = "/login/todo";
 }
 
 document.getElementById("home").onclick = () => {
