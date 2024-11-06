@@ -30,9 +30,7 @@ module.exports = async (req, callback) => {
             userName: data.username
         });
 
-        // permanentUsers.includes(data.username) || 
-
-        if (userProfile) {
+        if (permanentUsers.includes(data.username) || userProfile) {
             if (typeof callback == "function") data = callback(data);
 
             if (!userProfile && permanentUsers.includes(data.username)) {
@@ -43,7 +41,7 @@ module.exports = async (req, callback) => {
                 });
             }
 
-            if (userProfile) {
+            if (userProfile) { // Everytime user "re-auths" or "re-logins" it resets the user's session token
                 userProfile.sessionToken = data.sessionToken;
 
                 await userProfile.save();

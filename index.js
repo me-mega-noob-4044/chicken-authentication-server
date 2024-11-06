@@ -4,6 +4,8 @@ const { mongoose } = require("mongoose");
 const UserProfile = require("./schema/UserProfile");
 const path = require("path");
 
+const host = "localhost";
+
 const app = express();
 
 const importCode = require("./src/import-code");
@@ -42,7 +44,19 @@ app.get("/users*", async (req, res) => {
     res.send(users);
 });
 
-function generateSessionToken() {
+function generateSessionToken(req) {
+    let clientIp = "";
+
+    if (!host.includes("localhost")) {
+        let xForwardedFor = req.headers["x-forwarded-for"];
+
+        if (xForwardedFor) {
+            clientIp = xForwardedFor.split(",")[0];
+        }
+
+        if (!clientIp) clientIp = req.ip;
+    }
+
     let letters = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
     let result = "";
 
@@ -56,9 +70,14 @@ function generateSessionToken() {
 
     result = result + ":" + (Date.now() + (7 * 24 * 60 * 60e3)); // The session token lasts for 7 days
 
+    if (clientIp) {
+        result = result + ":" + clientIp;
+    }
+
     return encoder(result);
 }
 
+app.set("trust proxy", true);
 app.use(express.json());
 
 app.post("/login/access-token", async (req, res) => {
@@ -79,7 +98,7 @@ app.post("/login/access-token", async (req, res) => {
                 userAvatar: avatar
             });
 
-            userProfile.sessionToken = generateSessionToken();
+            userProfile.sessionToken = generateSessionToken(req);
 
             await userProfile.save();
 
@@ -98,7 +117,7 @@ app.get("/login/callback*", async (req, res) => {
     let data = await verification(req, (result) => {
         if (typeof result == "object") {
             // This will be used for quick authentication when the user tries to deploy chicken files into moomoo.io
-            result.sessionToken = generateSessionToken();
+            result.sessionToken = generateSessionToken(req);
 
             return result;
         }
