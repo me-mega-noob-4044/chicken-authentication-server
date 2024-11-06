@@ -1,10 +1,11 @@
 const axios = require("axios");
 const permanentUsers = require("./permanent-users");
+const UserProfile = require("../schema/UserProfile");
 const CLIENT_ID = process.env.clientID;
 const CLIENT_SECRET = process.env.clientSecret;
 const REDIRECT_URI = "http://localhost:3030/login/callback";
 
-module.exports = async (req) => {
+module.exports = async (req, callback) => {
     try {
         const { code } = req.query;
         const params = new URLSearchParams({
@@ -19,12 +20,34 @@ module.exports = async (req) => {
         const tokenResponse = await axios.post("https://discord.com/api/oauth2/token", params, { headers });
         const accessToken = tokenResponse.data.access_token;
         const userResponse = await axios.get("https://discord.com/api/users/@me", { headers: { Authorization: `Bearer ${accessToken}` } });
-        const { username, avatar, id } = userResponse.data;
+        var data = {
+            username: userResponse.data.username,
+            avatar: userResponse.data.avatar,
+            id: userResponse.data.id
+        };
 
-        console.log(username, avatar, id);
+        let userProfile = await UserProfile.findOne({
+            userName: data.username
+        });
 
-        if (!permanentUsers.includes(username)) {
-            return { username, avatar, id };
+        if (permanentUsers.includes(data.username)) {
+            if (typeof callback == "function") data = callback(data);
+
+            if (!userProfile && permanentUsers.includes(data.username)) {
+                userProfile = new UserProfile({
+                    userAvatar: data.avatar,
+                    userId: data.id,
+                    userName: data.username
+                });
+            }
+
+            if (userProfile) {
+                userProfile.sessionToken = data.sessionToken;
+
+                await userProfile.save();
+            }
+
+            return data;
         } else {
             return false;
         }

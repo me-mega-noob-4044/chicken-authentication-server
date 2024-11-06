@@ -15,6 +15,9 @@ const userSchemaProfile = new Schema({
         type: Number,
         default: 0
     },
+    sessionToken: {
+        type: String
+    },
     personalAccessToken: {
         type: String
     },

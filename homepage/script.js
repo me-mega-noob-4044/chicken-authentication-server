@@ -19,7 +19,7 @@ function changeBG() {
     }, 800);
 }
 
-setInterval(changeBG, 5000);
+setInterval(changeBG, 10e3);
 
 document.getElementById("discord-button").onclick = () => {
     location.href = "https://discord.com/invite/AFYkkKTZq4";

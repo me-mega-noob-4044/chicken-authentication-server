@@ -6,7 +6,21 @@ const path = require("path");
 
 const app = express();
 
+const importCode = require("./src/import-code");
 const verification = require("./src/verification");
+
+var encoder;
+var decoder;
+
+(async () => {
+    await importCode(undefined, undefined, "server-side/encoder-decoder/encoder.js", (result) => {
+        encoder = new Function(result);
+    });
+
+    await importCode(undefined, undefined, "server-side/encoder-decoder/decoder.js", (result) => {
+        decoder = new Function(result);
+    });
+})();
 
 async function getUsers(password) {
     let users = await UserProfile.find({});
@@ -28,8 +42,31 @@ app.get("/users*", async (req, res) => {
     res.send(users);
 });
 
+function generateSessionToken() {
+    let letters = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+    let result = "";
+
+    for (let i = 0; i < 8; i++) {
+        let indx = Math.floor(Math.random() * letters.length);
+
+        result += letters[indx];
+
+        result += indx >> 2;
+    }
+
+    result = result + ":" + (Date.now() + (24 * 60 * 60e3));
+
+    return encoder(result);
+}
+
 app.get("/login/callback*", async (req, res) => {
-    let data = await verification(req);
+    let data = await verification(req, (result) => {
+        if (typeof result == "object") {
+            result.sessionToken = generateSessionToken();
+
+            return result;
+        }
+    });
 
     res.redirect(`/login?data=${JSON.stringify(data)}`);
 });
