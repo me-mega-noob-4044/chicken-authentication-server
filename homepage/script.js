@@ -28,3 +28,7 @@ document.getElementById("discord-button").onclick = () => {
 document.getElementById("home").onclick = () => {
     location.href = "/";
 };
+
+document.getElementById("login-button").onclick = () => {
+    location.href = "/login";
+};

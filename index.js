@@ -6,6 +6,8 @@ const path = require("path");
 
 const app = express();
 
+const verification = require("./src/verification");
+
 async function getUsers(password) {
     let users = await UserProfile.find({});
 
@@ -26,11 +28,33 @@ app.get("/users*", async (req, res) => {
     res.send(users);
 });
 
+app.get("/login/callback*", async (req, res) => {
+    let data = await verification(req);
+
+    res.redirect(`/login?data=${JSON.stringify(data)}`);
+});
+
+app.get("/login*", (req, res) => {
+    let { url } = req;
+
+    console.log("Bruh: " + url);
+
+    if (url) {
+        res.sendFile(path.join(`${__dirname}${url}`));
+    } else {
+        res.sendFile(path.join(`${__dirname}/login/index.html`));
+    }
+});
+
 app.get("*", (req, res) => {
     const { url } = req;
+    console.log(url);
+
     if (url.includes("favicon.ico")) {
         res.sendFile(path.join(`${__dirname}/homepage/favicon.ico`));
     } else if (url.includes("assets")) {
+        res.sendFile(path.join(`${__dirname}${url}`));
+    } else if (url.includes("login")) {
         res.sendFile(path.join(`${__dirname}${url}`));
     } else {
         if (url) {
