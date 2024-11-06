@@ -51,13 +51,44 @@ function generateSessionToken() {
 
         result += letters[indx];
 
-        result += indx >> 2;
+        result += ((indx + 1) * 2) >> 2;
     }
 
-    result = result + ":" + (Date.now() + (24 * 60 * 60e3));
+    result = result + ":" + (Date.now() + (7 * 24 * 60 * 60e3)); // The session token lasts for 7 days
 
     return encoder(result);
 }
+
+app.use(express.json());
+
+app.post("/login/access-token", async (req, res) => {
+    let { accessToken, username, id, avatar } = req.body;
+
+    if (accessToken == "12345") { // tmp access token for development purposes
+        let userProfile = await UserProfile.findOne({
+            userName: username
+        });
+
+        if (userProfile) {
+            res.json({ msg: "You already have access buddy" });
+            return;
+        } else {
+            userProfile = new UserProfile({
+                userName: username,
+                userId: id,
+                userAvatar: avatar
+            });
+
+            userProfile.sessionToken = generateSessionToken();
+
+            await userProfile.save();
+
+            res.json({ msg: "Access granted" });
+        }
+    } else {
+        res.json({ msg: "Failed" });
+    }
+});
 
 app.get("/login/todo", (req, res) => {
     res.redirect("https://discord.com/oauth2/authorize?client_id=1178799009599598642&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3030%2Flogin%2Fcallback&scope=identify");

@@ -55,6 +55,25 @@ if (localStorage.cached || devauled) {
 
         document.addEventListener("keydown", (event) => {
             if (event.key == "Enter" && input.value) {
+                fetch("/login/access-token", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        accessToken: input.value,
+                        username: data.username,
+                        id: data.id,
+                        avatar: data.avatar
+                    })
+                }).then(e => e.json()).then(e => {
+                    if (e.msg == "Access granted") {
+                        localStorage.cached = "";
+
+                        location.href = location.href;
+                    }
+                });
+
                 input.value = "";
             }
         });
