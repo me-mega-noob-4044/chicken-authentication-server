@@ -11,12 +11,6 @@ const userSchemaProfile = new Schema({
     userAvatar: {
         type: String
     },
-    isOwner: {
-        type: Boolean
-    },
-    accessDate: {
-        type: Object
-    },
     userRank: {
         type: Number,
         default: 0
@@ -24,13 +18,6 @@ const userSchemaProfile = new Schema({
     personalAccessToken: {
         type: String
     },
-    isOnline: {
-        type: Boolean
-    },
-    chickenUserStats: {
-      type: [Number],
-      default: [0, 0, 0]
-    }
 }, { timestamps: true });
 
 module.exports = model("userprofiles", userSchemaProfile);

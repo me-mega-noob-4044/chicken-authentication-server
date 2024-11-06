@@ -34,12 +34,14 @@ app.get("/login/callback*", async (req, res) => {
     res.redirect(`/login?data=${JSON.stringify(data)}`);
 });
 
+app.get("/login", (req, res) => {
+    res.sendFile(path.join(`${__dirname}/login/index.html`));
+});
+
 app.get("/login*", (req, res) => {
     let { url } = req;
 
-    console.log("Bruh: " + url);
-
-    if (url) {
+    if (url && !url.includes("/login?data=")) {
         res.sendFile(path.join(`${__dirname}${url}`));
     } else {
         res.sendFile(path.join(`${__dirname}/login/index.html`));
@@ -48,13 +50,12 @@ app.get("/login*", (req, res) => {
 
 app.get("*", (req, res) => {
     const { url } = req;
-    console.log(url);
 
     if (url.includes("favicon.ico")) {
         res.sendFile(path.join(`${__dirname}/homepage/favicon.ico`));
     } else if (url.includes("assets")) {
         res.sendFile(path.join(`${__dirname}${url}`));
-    } else if (url.includes("login")) {
+    } else if (url.includes("src")) {
         res.sendFile(path.join(`${__dirname}${url}`));
     } else {
         if (url) {
