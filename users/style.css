@@ -99,7 +99,7 @@ body {
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    width: calc(100% - 40px);
+    /* width: calc(100% - 40px); */
     margin-top: 10px;
     margin-bottom: 10px;
     height: 120px;
@@ -119,7 +119,7 @@ body {
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    width: calc(100% - 200px);
+    width: calc(100% - 400px);
     background-color: rgba(169, 201, 197, 0.8);
     border: 6px solid rgb(108, 131, 129);
     border-radius: 12px;

@@ -58,6 +58,39 @@ function updateDisplay(indx) {
         title.innerHTML = powerToRole[i] + "(s)";
         element.appendChild(title);
 
+        for (let t = 0; t < groups[i].length; t += 4) {
+            let userHolder = document.createElement("div");
+            userHolder.style = `position: relative; width: 100%; display: flex; justify-content: center; align-items: center;`;
+            element.appendChild(userHolder);
+        
+            for (let tt = 0; tt < 3; tt++) {
+                if (t + tt >= groups[i].length) break;
+        
+                let data = groups[i][t + tt];
+        
+                let user = document.createElement("div");
+                user.classList.add("user-cell");
+                if (tt == 1) user.style.marginLeft = "10px";
+        
+                let img = document.createElement("img");
+                img.style = "height: 90px; border-radius: 100%; cursor: pointer;";
+                img.src = UTILS.returnAvatarFormat(data.userId, data.userAvatar);
+                img.onerror = function () {
+                    this.onerror = null;
+                    this.src = UTILS.returnAvatarFormat();
+                };
+                img.onclick = () => {};
+                user.appendChild(img);
+        
+                userHolder.appendChild(user);
+        
+                user.innerHTML += data.userName;
+            }
+        }
+        
+
+        /*
+
         let userHolder = document.createElement("div");
         userHolder.style = `position: relative; width: 100%; display: flex; justify-content: center; align-items: center; flex-direction: column;`;
         element.appendChild(userHolder);
@@ -82,6 +115,7 @@ function updateDisplay(indx) {
 
             user.innerHTML += data.userName;
         }
+            */
 
         main.appendChild(element);
 
