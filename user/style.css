@@ -55,3 +55,89 @@ html, body {
     background-repeat: no-repeat;
     background-image: url("../assets/bg-image-4.png");
 }
+
+.main {
+    position: absolute;
+    top: 95px;
+    left: 0px;
+    width: 100%;
+    height: calc(100% - 115px);
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+#useless-data {
+    top: 320px;
+    height: 96px;
+}
+
+#stats-holder {
+    top: 210px;
+    height: 96px;
+}
+
+.group-cell {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.stat-cell {
+    padding: 10px;
+    height: 60px;
+    width: calc(33% - 15px);
+    background-color: rgb(143, 172, 169);
+    border: solid;
+    border-width: 8px;
+    border-color: rgb(117, 141, 139);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.stat-cell-50 {
+    width: calc(50% - 30px);
+}
+
+#name-holder {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    top: 20px;
+    left: 50%;
+    height: 140px;
+    transform: translateX(-50%);
+    background-color: rgb(143, 172, 169);
+    border: solid;
+    border-width: 8px;
+    border-color: rgb(117, 141, 139);
+    border-radius: 12px;
+}
+
+#pfp {
+    border-radius: 100%;
+}
+
+#name {
+    font-size: 36px;
+    font-weight: 900;
+    margin-left: 15px;
+}
+
+.stat-title {
+    font-size: 32px;
+    font-weight: 900;
+    text-decoration: underline;
+}
+
+.stat {
+    font-weight: 900;
+    font-size: 16px;
+}

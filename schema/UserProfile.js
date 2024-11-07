@@ -24,6 +24,10 @@ const userSchemaProfile = new Schema({
     userData: {
         type: [Number],
         default: [0, 0, 0] /* kills, deaths, time played */
+    },
+    lastOnline: {
+        type: Date,
+        default: new Date()
     }
 }, { timestamps: true });
 

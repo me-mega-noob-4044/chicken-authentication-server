@@ -14,5 +14,5 @@ export const returnAvatarFormat = (id, avatar) => {
     if (!avatar || !id) {
         return chickenServerIcon;
     }
-    return `https://cdn.discordapp.com/avatars/${id}/${avatar}.png`;
+    return `https://cdn.discordapp.com/avatars/${id}/${avatar}.gif`;
 }

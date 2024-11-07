@@ -37,8 +37,12 @@ if (localStorage.cached || devauled) {
     img.style.height = "100%";
     img.src = UTILS.returnAvatarFormat(data.id, data.avatar);
     img.onerror = function () {
-        this.onerror = null;
-        this.src = UTILS.returnAvatarFormat();
+        if (this.src.includes(".gif")) {
+            this.src = this.src.split(".gif")[0] + ".png";
+        } else {
+            this.onerror = null;
+            this.src = UTILS.returnAvatarFormat();
+        }
     };
 
     userAvatar.appendChild(img);

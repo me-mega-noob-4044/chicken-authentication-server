@@ -76,8 +76,12 @@ function updateDisplay(indx) {
                 img.style = "height: 90px; border-radius: 100%; cursor: pointer; pointer-events: all;";
                 img.src = UTILS.returnAvatarFormat(data.userId, data.userAvatar);
                 img.onerror = function () {
-                    this.onerror = null;
-                    this.src = UTILS.returnAvatarFormat();
+                    if (this.src.includes(".gif")) {
+                        this.src = this.src.split(".gif")[0] + ".png";
+                    } else {
+                        this.onerror = null;
+                        this.src = UTILS.returnAvatarFormat();
+                    }
                 };
                 img.onclick = function () {
                     location.href = `/user/${data.userName}`;

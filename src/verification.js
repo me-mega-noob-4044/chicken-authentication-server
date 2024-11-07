@@ -44,6 +44,7 @@ module.exports = async (req, callback) => {
             }
 
             if (userProfile) { // Everytime user "re-auths" or "re-logins" it resets the user's session token
+                userProfile.userAvatar = data.avatar;
                 userProfile.sessionToken = data.sessionToken;
 
                 await userProfile.save();

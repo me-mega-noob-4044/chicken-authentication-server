@@ -25,6 +25,8 @@ var decoder;
 })();
 
 function validateSessionToken(req, token) {
+    if (token == undefined) return false;
+
     let clientIp = "";
 
     if (!host.includes("localhost")) {
@@ -37,7 +39,13 @@ function validateSessionToken(req, token) {
         if (!clientIp) clientIp = req.ip;
     }
 
-    let decoded = decoder(token)[0].split(":");
+    let decoded = decoder(token);
+    
+    if (decoded == undefined) {
+        return false;
+    }
+    
+    decoded = decoded[0].split(":");
 
     if (decoded.length == 3) {
         // Verify Token IP: prevents session token sharing between 2+ parties
@@ -155,9 +163,16 @@ app.post("/login/access-token", async (req, res) => {
 });
 
 app.post("/get-user", async (req, res) => {
-    let { username, sessionToken } = req.body;
+    let { username, token } = req.body;
 
-    let users = getUsers(sessionToken);
+    let user = await UserProfile.findOne({
+        sessionToken: token
+    });
+
+    let users = await getUsers(req, token);
+    let victim = users.find(e => e.userName == username);
+
+    res.json({ msg: victim, powerOver: user?.userRank > victim?.userRank });
 });
 
 app.get("/login/todo", (req, res) => {
@@ -206,8 +221,13 @@ app.get("/users*", (req, res) => {
 app.get("/user*", (req, res) => {
     let { url } = req;
 
-    if (url.includes("style.css") || url.includes("script.js")) {
-        res.sendFile(path.join(`${__dirname}${url}`));
+    if (url.includes("style.css") || url.includes("script.js") || url.includes("favicon")) {
+        if (url.includes("favicon")) {
+            res.sendFile(path.join(`${__dirname}/homepage/favicon.ico`));
+        } else {
+            res.sendFile(path.join(`${__dirname}${url}`));
+        }
+
         return;
     }
 
