@@ -36,7 +36,7 @@ async function getUsers(password) {
     return users;
 }
 
-app.get("/users*", async (req, res) => {
+app.get("/userData*", async (req, res) => {
     let { password } = req.query;
 
     let users = await getUsers(password);
@@ -80,6 +80,16 @@ function generateSessionToken(req) {
 app.set("trust proxy", true);
 app.use(express.json());
 
+app.post("/login/validate-access", async (req, res) => {
+    let { username } = req.body;
+
+    let userProfile = await UserProfile.findOne({
+        userName: username
+    });
+
+    res.json({ valid: !!userProfile });
+});
+
 app.post("/login/access-token", async (req, res) => {
     let { accessToken, username, id, avatar } = req.body;
 
@@ -102,10 +112,10 @@ app.post("/login/access-token", async (req, res) => {
 
             await userProfile.save();
 
-            res.json({ msg: "Access granted" });
+            res.json({ valid: true, msg: "You have entered a valid access token! The page will refresh, and you'll re-authenticate with Discord to finish the process of gaining access." });
         }
     } else {
-        res.json({ msg: "Failed" });
+        res.json({ msg: `Attention: The access token '${accessToken}' is invalid` });
     }
 });
 

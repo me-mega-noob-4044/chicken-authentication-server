@@ -30,7 +30,9 @@ module.exports = async (req, callback) => {
             userName: data.username
         });
 
-        if (permanentUsers.includes(data.username) || userProfile) {
+        // permanentUsers.includes(data.username) || 
+
+        if (userProfile) {
             if (typeof callback == "function") data = callback(data);
 
             if (!userProfile && permanentUsers.includes(data.username)) {

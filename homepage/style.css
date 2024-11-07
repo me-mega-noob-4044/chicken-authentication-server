@@ -20,9 +20,11 @@ html, body {
     align-items: center;
     height: 95px;
     width: 100%;
-    background-color: rgba(202, 202, 0, 0.85);
+    background-color: rgba(143, 172, 169, 0.85);
+    /* background-color: rgba(202, 202, 0, 0.85); */
     z-index: 100000;
 }
+
 
 .sub-header-tab {
     margin: 10px;
@@ -43,11 +45,13 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(202, 202, 0, 0.55);
+    background-color: rgba(177, 199, 193, 0.55);
+    /* background-color: rgba(202, 202, 0, 0.55); */
     height: 45px;
     width: 100%;
     z-index: 100000;
 }
+
 
 .page-title {
     font-size: 36px;
@@ -99,7 +103,8 @@ html, body {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    background: linear-gradient(0deg, rgb(218, 218, .8) 0%, rgb(218, 218, .4) 2%, rgba(0, 0, 0, 0) 60%);
+    background: linear-gradient(0deg, rgba(169, 201, 197, 0.6) 0%, rgba(211, 211, 211, 0.5) 50%, rgba(0, 0, 0, 0) 100%);
+    /* background: linear-gradient(0deg, rgb(218, 218, .8) 0%, rgb(218, 218, .4) 2%, rgba(0, 0, 0, 0) 60%); */
 }
 
 .main-icon {

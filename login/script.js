@@ -10,6 +10,15 @@ if (typeof devauled == "string") {
 
 window.history.replaceState({}, "", "login");
 
+function announce(text) {
+    document.getElementById("announcement-header").style.display = "flex";
+    document.getElementById("announcement-text").innerHTML = text;
+
+    document.getElementById("announcement-close").onclick = () => {
+        document.getElementById("announcement-header").style.display = "none";
+    };
+}
+
 if (localStorage.cached || devauled) {
     let data = (devauled || JSON.parse(localStorage.cached));
 
@@ -27,7 +36,7 @@ if (localStorage.cached || devauled) {
     img.style.width = "100%";
     img.style.height = "100%";
     img.src = UTILS.returnAvatarFormat(data.id, data.avatar);
-    img.onerror = function() {
+    img.onerror = function () {
         this.onerror = null;
         this.src = UTILS.returnAvatarFormat();
     };
@@ -37,9 +46,9 @@ if (localStorage.cached || devauled) {
     let name = document.createElement("div");
     name.classList.add("main-name-display");
     name.innerHTML = `
-    <div style="color: rgb(202, 202, 0);">Hello!</div>
+    <div style="color: rgb(143, 172, 169);">Hello!</div>
     <div style="margin-top: -5px;">${data.username}</div>`;
-    
+
     element.appendChild(userAvatar);
     element.appendChild(name);
 
@@ -67,10 +76,14 @@ if (localStorage.cached || devauled) {
                         avatar: data.avatar
                     })
                 }).then(e => e.json()).then(e => {
-                    if (e.msg == "Access granted") {
-                        localStorage.cached = "";
+                    announce(e.msg);
 
-                        location.href = location.href;
+                    if (e.valid) {
+                        setTimeout(() => {
+                            localStorage.cached = "";
+
+                            location.href = location.href;
+                        }, 5e3);
                     }
                 });
 
@@ -79,11 +92,28 @@ if (localStorage.cached || devauled) {
         });
 
         document.getElementById("main-body").appendChild(input);
+    } else {
+        // Checks if user has cached stuff, if so validate if they still have access
+        fetch("/login/validate-access", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: data.username
+            })
+        }).then(e => e.json()).then(e => {
+            if (!e.valid) {
+                localStorage.cached = "";
+
+                location.href = location.href;
+            }
+        });
     }
 
     // Not you button:
     let notYou = document.createElement("div");
-    notYou.style = "font-size: 12px; font-weight: 900; color: rgb(158, 158, 0); cursor: pointer;";
+    notYou.style = "font-size: 12px; font-weight: 900; color: rgb(143, 172, 169); cursor: pointer;";
     notYou.innerHTML = "Not you?";
 
     notYou.onclick = () => {
