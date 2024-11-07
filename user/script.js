@@ -20,3 +20,28 @@ function changeBG() {
 }
 
 setInterval(changeBG, 10e3);
+
+var user;
+var data = {};
+
+if (localStorage.cached) {
+    data = JSON.parse(localStorage.cached);
+}
+
+(async () => {
+    let username = location.href.split("/user/")[1];
+
+    user = await fetch("/get-user", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            username: username,
+            token: data.sessionToken || ""
+        })
+    }).then(e => e.json());
+
+    console.log(user);
+
+})();

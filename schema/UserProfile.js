@@ -21,6 +21,10 @@ const userSchemaProfile = new Schema({
     personalAccessToken: {
         type: String
     },
+    userData: {
+        type: [Number],
+        default: [0, 0, 0] /* kills, deaths, time played */
+    }
 }, { timestamps: true });
 
 module.exports = model("userprofiles", userSchemaProfile);

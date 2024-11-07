@@ -24,10 +24,44 @@ var decoder;
     });
 })();
 
-async function getUsers(password) {
+function validateSessionToken(req, token) {
+    let clientIp = "";
+
+    if (!host.includes("localhost")) {
+        let xForwardedFor = req.headers["x-forwarded-for"];
+
+        if (xForwardedFor) {
+            clientIp = xForwardedFor.split(",")[0];
+        }
+
+        if (!clientIp) clientIp = req.ip;
+    }
+
+    let decoded = decoder(token)[0].split(":");
+
+    if (decoded.length == 3) {
+        // Verify Token IP: prevents session token sharing between 2+ parties
+        if (clientIp != decoded[2]) {
+            return false;
+        }
+    }
+
+    // Checks if the token is expired
+    if (Date.now() > decoded[1]) {
+        return false;
+    }
+
+    return true;
+}
+
+async function getUsers(req, sessionToken) {
     let users = await UserProfile.find({});
 
-    if (password != process.env.personalTokenPassword) {
+    let user = await UserProfile.findOne({
+        sessionToken: sessionToken
+    });
+
+    if (!user || !validateSessionToken(req, sessionToken) || user.userRank < 2) { // password != process.env.personalTokenPassword
         users.forEach(user => {
             user.personalAccessToken = "";
             user.sessionToken = "";
@@ -38,9 +72,9 @@ async function getUsers(password) {
 }
 
 app.get("/userData*", async (req, res) => {
-    let { password } = req.query;
+    let { sessionToken } = req.query;
 
-    let users = await getUsers(password);
+    let users = await getUsers(req, sessionToken);
 
     res.send(users);
 });
@@ -118,6 +152,12 @@ app.post("/login/access-token", async (req, res) => {
     } else {
         res.json({ msg: `Attention: The access token '${accessToken}' is invalid` });
     }
+});
+
+app.post("/get-user", async (req, res) => {
+    let { username, sessionToken } = req.body;
+
+    let users = getUsers(sessionToken);
 });
 
 app.get("/login/todo", (req, res) => {
