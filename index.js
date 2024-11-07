@@ -30,6 +30,7 @@ async function getUsers(password) {
     if (password != process.env.personalTokenPassword) {
         users.forEach(user => {
             user.personalAccessToken = "";
+            user.sessionToken = "";
         });
     }
     
