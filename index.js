@@ -163,6 +163,27 @@ app.get("/users*", (req, res) => {
     res.sendFile(path.join(`${__dirname}${url}`));
 });
 
+app.get("/user*", (req, res) => {
+    let { url } = req;
+
+    if (url.includes("style.css") || url.includes("script.js")) {
+        res.sendFile(path.join(`${__dirname}${url}`));
+        return;
+    }
+
+    url = url.split("/user/")[1];
+
+    let userProfile = UserProfile.findOne({
+        userName: url
+    });
+
+    if (userProfile) {
+        res.sendFile(path.join(`${__dirname}/user/index.html`));
+    } else {
+        res.send(`'${url}' is not a user`);
+    }
+});
+
 app.get("*", (req, res) => {
     let { url } = req;
 

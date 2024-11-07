@@ -73,18 +73,22 @@ function updateDisplay(indx) {
                 if (tt == 1) user.style.marginLeft = "10px";
         
                 let img = document.createElement("img");
-                img.style = "height: 90px; border-radius: 100%; cursor: pointer;";
+                img.style = "height: 90px; border-radius: 100%; cursor: pointer; pointer-events: all;";
                 img.src = UTILS.returnAvatarFormat(data.userId, data.userAvatar);
                 img.onerror = function () {
                     this.onerror = null;
                     this.src = UTILS.returnAvatarFormat();
                 };
-                img.onclick = () => {};
+                img.onclick = function () {
+                    location.href = `/user/${data.userName}`;
+                };
                 user.appendChild(img);
         
                 userHolder.appendChild(user);
         
-                user.innerHTML += data.userName;
+                let usernameText = document.createElement("div");
+                usernameText.textContent = data.userName;
+                user.appendChild(usernameText);
             }
         }
         

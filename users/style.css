@@ -1,5 +1,4 @@
-html,
-body {
+html, body {
     padding: 0px;
     margin: 0px;
     user-select: none;
@@ -32,9 +31,7 @@ body {
 }
 
 @keyframes blink {
-
-    0%,
-    100% {
+    0%, 100% {
         opacity: 1;
     }
 
