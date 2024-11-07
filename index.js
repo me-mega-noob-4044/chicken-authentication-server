@@ -150,8 +150,20 @@ app.get("/login*", (req, res) => {
     }
 });
 
+app.get("/users", (req, res) => {
+    let { url } = req;
+
+    res.sendFile(path.join(`${__dirname}/users/index.html`));
+});
+
+app.get("/users*", (req, res) => {
+    let { url } = req;
+
+    res.sendFile(path.join(`${__dirname}${url}`));
+});
+
 app.get("*", (req, res) => {
-    const { url } = req;
+    let { url } = req;
 
     if (url.includes("favicon.ico")) {
         res.sendFile(path.join(`${__dirname}/homepage/favicon.ico`));

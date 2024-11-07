@@ -29,6 +29,10 @@ document.getElementById("home").onclick = () => {
     location.href = "/";
 };
 
+document.getElementById("users-button").onclick = () => {
+    location.href = "/users";
+};
+
 document.getElementById("login-button").onclick = () => {
     location.href = "/login";
 };
