@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
     padding: 0px;
     margin: 0px;
     user-select: none;
@@ -31,9 +32,12 @@ html, body {
 }
 
 @keyframes blink {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 1;
     }
+
     50% {
         opacity: 0;
     }
@@ -78,4 +82,57 @@ html, body {
     height: 45px;
     width: 100%;
     z-index: 100000;
+}
+
+#main {
+    position: absolute;
+    top: 140px;
+    left: 0px;
+    width: 100%;
+    height: calc(100% - 160px);
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.user-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: calc(100% - 40px);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 120px;
+    overflow: hidden;
+    padding: 5px;
+    border-radius: 12px;
+    font-weight: 900;
+    color: white;
+    background-color: rgb(108, 131, 129);
+}
+
+.group-cell {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: calc(100% - 200px);
+    background-color: rgba(169, 201, 197, 0.8);
+    border: 6px solid rgb(108, 131, 129);
+    border-radius: 12px;
+}
+
+.cell-title {
+    position: relative;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    background-color: rgb(108, 131, 129);
+    height: 40px;
+    width: 100%;
 }
