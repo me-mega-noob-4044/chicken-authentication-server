@@ -6,7 +6,8 @@ const tokenSchemaProfile = new Schema({
         required: true
     },
     expireDate: {
-        type: Number
+        type: Number,
+        required: true
     },
     accessGrantTime: {
         type: Number

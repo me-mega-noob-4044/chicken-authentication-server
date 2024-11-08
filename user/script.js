@@ -83,7 +83,93 @@ import powerToRole from "../src/power-to-role.js";
         return `${datePart} (${timePart})`;
     }
 
+    var darkFadeTransition = document.getElementById("darkFadeTransition");
+    var tokenGeneration = document.getElementById("token-generation");
+
+    function doDarkModeTransition() {
+        darkFadeTransition.style.display = "block";
+        setTimeout(() => {
+            darkFadeTransition.style.opacity = 0;
+            setTimeout(() => {
+                darkFadeTransition.style.display = "none";
+                darkFadeTransition.style.opacity = 1;
+            }, 400);
+        }, 50);
+    }
+
     var havePowerOver = false;
+
+    function generateToken() {
+        tokenGeneration.style.display = "flex";
+
+        let element = document.createElement("div");
+        element.style = `
+        width: 450px;
+        height: 193.5px;
+        border: solid;
+        border-width: 8px;
+        border-color: rgb(117, 141, 139);
+        border-radius: 12px;background-color: rgb(143, 172, 169);
+        box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.2), -5px 0px 10px rgba(0, 0, 0, 0.2), 0px 5px 10px rgba(0, 0, 0, 0.2), 5px 0px 10px rgba(0, 0, 0, 0.2);
+        `;
+
+        let title = document.createElement("div");
+        title.style = `
+        padding-top: 5px;
+        padding-bottom: 5px;
+        text-align: center;
+        font-weight: 900;
+        font-size: 32px;
+        width: 100%;
+        background-color: rgb(117, 141, 139);
+        `;
+        title.innerHTML = "Access Token Generation";
+
+        let tokenLastTime = document.createElement("input");
+        tokenLastTime.type = "text";
+        tokenLastTime.style = `
+        border: none;
+        outline: none;
+        width: 100%;
+        height: 40px;
+        font-weight: 900;
+        font-size: 20px;
+        `;
+        tokenLastTime.placeholder = "Token Lifespan (4d 2s format)";
+
+        let grantAccessTime = document.createElement("input");
+        grantAccessTime.type = "text";
+        grantAccessTime.style = `
+        border: none;
+        outline: none;
+        width: 100%;
+        height: 40px;
+        font-weight: 900;
+        font-size: 20px;
+        margin-top: 10px;
+        `;
+        grantAccessTime.placeholder = "Access Duration (4d 2s format)";
+
+        let doneButton = document.createElement("button");
+        doneButton.style = `
+        outline: none;
+        border: none;
+        width: 100%;
+        margin-top: 10px;
+        height: 40px;
+        background-color: rgb(117, 141, 139);
+        font-weight: 900;
+        font-size: 20px;
+        cursor: pointer;
+        `;
+        doneButton.innerHTML = "Generate";
+
+        element.appendChild(title);
+        element.appendChild(tokenLastTime);
+        element.appendChild(grantAccessTime);
+        element.appendChild(doneButton);
+        tokenGeneration.appendChild(element);
+    }
 
     function drawProfile() {
         name.innerText = user.userName;
@@ -112,6 +198,11 @@ import powerToRole from "../src/power-to-role.js";
         if (data.username == user.userName && user.userRank > 0) {
             generateAccessToken.style.display = "block";
             generateAccessToken.style.top = "430px";
+
+            generateAccessToken.onclick = () => {
+                doDarkModeTransition();
+                generateToken();
+            };
         }
 
         if (!user.accessExpireDate) {
