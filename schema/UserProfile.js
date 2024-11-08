@@ -18,6 +18,9 @@ const userSchemaProfile = new Schema({
     sessionToken: {
         type: String
     },
+    accessExpireDate: {
+        type: Number
+    },
     personalAccessToken: {
         type: String
     },

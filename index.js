@@ -62,6 +62,15 @@ function validateSessionToken(req, token) {
     return true;
 }
 
+// Checks if access isn't expired. Returns true if access is good
+function validateUserAccess(user) {
+    if (!user) return false;
+    if (!user.accessExpireDate) return true;
+    if (Date.now() > user.accessExpireDate) return false;
+
+    return true;
+}
+
 async function getUsers(req, sessionToken) {
     let users = await UserProfile.find({});
 
@@ -69,7 +78,7 @@ async function getUsers(req, sessionToken) {
         sessionToken: sessionToken
     });
 
-    if (!user || !validateSessionToken(req, sessionToken) || user.userRank < 2) { // password != process.env.personalTokenPassword
+    if (!user || !validateUserAccess(user) || !validateSessionToken(req, sessionToken) || user.userRank < 2) { // password != process.env.personalTokenPassword
         users.forEach(user => {
             user.personalAccessToken = "";
             user.sessionToken = "";

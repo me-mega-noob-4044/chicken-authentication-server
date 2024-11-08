@@ -1,7 +1,7 @@
 import * as UTILS from "../src/utils.js";
+import powerToRole from "../src/power-to-role.js";
 
 (function () {
-
     var images = ["../assets/bg-image-1.png", "../assets/bg-image-2.png", "../assets/bg-image-3.png", "../assets/bg-image-4.png"];
     var bgImage = document.getElementById("bg-image");
 
@@ -36,6 +36,11 @@ import * as UTILS from "../src/utils.js";
     var nameHolder = document.getElementById("name-holder");
     var statsHolder = document.getElementById("stats-holder");
     var uselessData = document.getElementById("useless-data");
+    var accessControls = document.getElementById("access-controls");
+    var admenControls = document.getElementById("admen-controls");
+    var accessData = document.getElementById("access-data");
+    var pfpTitle = document.getElementById("pfp-title");
+    var usernameControls = document.getElementById("username-controls");
 
     var pfp = document.getElementById("pfp");
     pfp.onerror = function () {
@@ -81,12 +86,32 @@ import * as UTILS from "../src/utils.js";
 
     function drawProfile() {
         name.innerText = user.userName;
+
+        if (user.userRank >= 3) {
+            pfpTitle.innerText = "🥇";
+        } else if (user.userRank == 2) {
+            pfpTitle.innerText = "🥈";
+        } else if (user.userRank == 1) {
+            pfpTitle.innerText = "🥉";
+        }
+
+        pfpTitle.innerText += powerToRole[user.userRank];
+
         pfp.src = UTILS.returnAvatarFormat(user.userId, user.userAvatar);
 
         let nameHolderWidth = Math.max(734.81, nameHolder.clientWidth - 16.19);
 
         statsHolder.style.width = (nameHolderWidth + 36) + "px";
         uselessData.style.width = (nameHolderWidth + 36) + "px";
+        accessControls.style.width = (nameHolderWidth + 36) + "px";
+        accessData.style.width = (nameHolderWidth + 36) + "px";
+        usernameControls.style.width = (nameHolderWidth + 36) + "px";
+
+        if (!user.accessExpireDate) {
+            accessData.style.display = "none";
+            accessControls.style.top = "430px";
+            usernameControls.style.top = "540px";
+        }
 
         document.getElementById("kills").innerText = user.userData[0];
         document.getElementById("deaths").innerText = user.userData[1];
@@ -96,7 +121,7 @@ import * as UTILS from "../src/utils.js";
         document.getElementById("last-online-date").innerText = formatDate(user.lastOnline);
 
         if (havePowerOver) {
-            // 
+            admenControls.style.display = "block";
         }
     }
 

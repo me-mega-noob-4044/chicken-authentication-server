@@ -76,6 +76,21 @@ html, body {
     height: 96px;
 }
 
+#username-controls {
+    top: 650px;
+    height: 96px;
+}
+
+#access-controls {
+    top: 540px;
+    height: 96px;
+}
+
+#access-data {
+    top: 430px;
+    height: 96px;
+}
+
 .group-cell {
     position: absolute;
     display: flex;
@@ -98,6 +113,10 @@ html, body {
     align-items: center;
     justify-content: center;
     flex-direction: column;
+}
+
+.stat-cell-100 {
+    width: calc(100%);
 }
 
 .stat-cell-50 {
@@ -131,6 +150,14 @@ html, body {
     margin-left: 15px;
 }
 
+#pfp-title {
+    font-size: 14px;
+    margin-top: -5px;
+    font-weight: 700;
+    margin-left: 15px;
+    color: rgb(76, 76, 76);
+}
+
 .stat-title {
     font-size: 32px;
     font-weight: 900;
@@ -140,4 +167,30 @@ html, body {
 .stat {
     font-weight: 900;
     font-size: 16px;
+}
+
+#admen-controls {
+    display: none;
+}
+
+.stat-cell-green {
+    color: white;
+    background-color: rgb(101, 225, 101);
+    border-color: rgb(69, 156, 69);
+    cursor: pointer;
+}
+
+.stat-cell-green:hover {
+    background-color: rgb(91, 204, 91);
+}
+
+.stat-cell-red {
+    color: white;
+    background-color: rgb(246, 92, 92);
+    border-color: rgb(177, 66, 66);
+    cursor: pointer;
+}
+
+.stat-cell-red:hover {
+    background-color: rgb(221, 82, 82);
 }
