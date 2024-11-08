@@ -99,6 +99,36 @@ import powerToRole from "../src/power-to-role.js";
 
     var havePowerOver = false;
 
+    function stringToMS(timeString) {
+        let times = {
+            "s": 1e3,
+            "m": 2.628e9,
+            "m_min": 6e4,
+            "h": 3.6e6,
+            "d": 8.64e7
+        };
+    
+        let array = timeString.split(" ");
+        let total = 0;
+        let found = false;
+    
+        for (let i of array) {
+            let value = parseFloat(i);
+            let unit = i.match(/[a-zA-Z]+/)[0];
+    
+            if (unit == "m" && !found) {
+                total += value * times["m"];
+                found = true;
+            } else if (unit == "m") {
+                total += value * times["m_min"];
+            } else if (times[unit]) {
+                total += value * times[unit];
+            }
+        }
+    
+        return total;
+    }
+
     function generateToken() {
         tokenGeneration.style.display = "flex";
 
@@ -163,6 +193,29 @@ import powerToRole from "../src/power-to-role.js";
         cursor: pointer;
         `;
         doneButton.innerHTML = "Generate";
+
+        doneButton.onclick = () => {
+            if (tokenLastTime.value) {
+                let accessTime = stringToMS(grantAccessTime.value || "0s");
+                let lifespan = stringToMS(tokenLastTime.value);
+
+                if (!isNaN(lifespan) && typeof lifespan == "number") {
+                    fetch("/generate-token", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            lifespan: lifespan,
+                            accessTime: (accessTime || 0),
+                            token: user.sessionToken
+                        })
+                    }).then(e => e.json()).then(e => {
+                        console.log(e);
+                    });
+                }
+            }
+        };
 
         element.appendChild(title);
         element.appendChild(tokenLastTime);

@@ -12,6 +12,6 @@ const tokenSchemaProfile = new Schema({
     accessGrantTime: {
         type: Number
     }
-}, { timestamps: true });
+});
 
 module.exports = model("accesstokens", tokenSchemaProfile);

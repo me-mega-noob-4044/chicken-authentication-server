@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const { mongoose } = require("mongoose");
 const UserProfile = require("./schema/UserProfile");
+const AccessToken = require("./schema/AccessToken");
 const path = require("path");
 
 const host = "localhost";
@@ -129,8 +130,49 @@ function generateSessionToken(req) {
     return encoder(result);
 }
 
+function generateTokenString() {
+    let letters = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+    let result = "";
+
+    for (let i = 0; i < 8; i++) {
+        let indx = Math.floor(Math.random() * letters.length);
+
+        result += letters[indx];
+
+        result += ((indx + 1) * 2) >> 2;
+        result += ((indx + 1) * 2) << 2;
+    }
+
+    result = result + ":" + Date.now();
+
+    return encoder(result);
+}
+
 app.set("trust proxy", true);
 app.use(express.json());
+
+app.post("/generate-token", async (req, res) => {
+    let { lifespan, token, accessTime } = req.body;
+
+    let user = UserProfile.findOne({
+        sessionToken: token
+    });
+
+    if (user && validateUserAccess(user) && validateSessionToken(req, token) && lifespan) {
+        let id = generateTokenString();
+        let token = new AccessToken({
+            accessId: id,
+            expireDate: Date.now() + lifespan,
+            accessGrantTime: accessTime ? Date.now() + accessTime : 0
+        });
+
+        await token.save();
+
+        res.json({ msg: "Success!", id: id });
+    } else {
+        res.json({ msg: "Failed" });
+    }
+});
 
 app.post("/login/validate-access", async (req, res) => {
     let { username } = req.body;
