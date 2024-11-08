@@ -151,6 +151,28 @@ function generateTokenString() {
 app.set("trust proxy", true);
 app.use(express.json());
 
+app.post("/delete-user", async (req, res) => {
+    let { username, token } = req.body;
+
+    let user = await UserProfile.findOne({
+        sessionToken: token
+    });
+
+    let victim = UserProfile.findOne({
+        userName: username
+    });
+
+    if (user && validateUserAccess(user) && validateSessionToken(req, token) && user.userRank > victim.userRank) {
+        await UserProfile.deleteOne({
+            userName: username
+        });
+
+        res.json({ msg: "valid" });
+    } else {
+        res.json({ msg: "Failed" });
+    }
+});
+
 app.post("/generate-token", async (req, res) => {
     let { lifespan, token, accessTime } = req.body;
 

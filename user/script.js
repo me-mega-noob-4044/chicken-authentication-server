@@ -84,7 +84,7 @@ import powerToRole from "../src/power-to-role.js";
     }
 
     var darkFadeTransition = document.getElementById("darkFadeTransition");
-    var tokenGeneration = document.getElementById("token-generation");
+    var form = document.getElementById("form");
     var accessTime = document.getElementById("access-time");
 
     function doDarkModeTransition() {
@@ -131,68 +131,27 @@ import powerToRole from "../src/power-to-role.js";
     }
 
     function generateToken() {
-        tokenGeneration.style.display = "flex";
+        form.style.display = "flex";
 
         let element = document.createElement("div");
-        element.style = `
-        width: 450px;
-        height: 193.5px;
-        border: solid;
-        border-width: 8px;
-        border-color: rgb(117, 141, 139);
-        border-radius: 12px;background-color: rgb(143, 172, 169);
-        box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.2), -5px 0px 10px rgba(0, 0, 0, 0.2), 0px 5px 10px rgba(0, 0, 0, 0.2), 5px 0px 10px rgba(0, 0, 0, 0.2);
-        `;
+        element.classList.add("token-generate-form")
 
         let title = document.createElement("div");
-        title.style = `
-        padding-top: 5px;
-        padding-bottom: 5px;
-        text-align: center;
-        font-weight: 900;
-        font-size: 32px;
-        width: 100%;
-        background-color: rgb(117, 141, 139);
-        `;
+        title.classList.add("form-title");
         title.innerHTML = "Access Token Generation";
 
         let tokenLastTime = document.createElement("input");
         tokenLastTime.type = "text";
-        tokenLastTime.style = `
-        border: none;
-        outline: none;
-        width: 100%;
-        height: 40px;
-        font-weight: 900;
-        font-size: 20px;
-        `;
+        tokenLastTime.classList.add("form-token-lifespan");
         tokenLastTime.placeholder = "Token Lifespan (4d 2s format)";
 
         let grantAccessTime = document.createElement("input");
         grantAccessTime.type = "text";
-        grantAccessTime.style = `
-        border: none;
-        outline: none;
-        width: 100%;
-        height: 40px;
-        font-weight: 900;
-        font-size: 20px;
-        margin-top: 10px;
-        `;
+        grantAccessTime.classList("form-access-time");
         grantAccessTime.placeholder = "Access Duration (4d 2s format)";
 
         let doneButton = document.createElement("button");
-        doneButton.style = `
-        outline: none;
-        border: none;
-        width: 100%;
-        margin-top: 10px;
-        height: 40px;
-        background-color: rgb(117, 141, 139);
-        font-weight: 900;
-        font-size: 20px;
-        cursor: pointer;
-        `;
+        doneButton.classList.add("form-finish-button");
         doneButton.innerHTML = "Generate";
 
         doneButton.onclick = () => {
@@ -212,7 +171,13 @@ import powerToRole from "../src/power-to-role.js";
                             token: user.sessionToken
                         })
                     }).then(e => e.json()).then(e => {
-                        console.log(e);
+                        if (e.id) {
+                            navigator.clipboard.writeText(e.id);
+                        }
+
+                        element.remove();
+                        form.style.display = "none";
+                        alert(e.msg + (e.msg == "Success!" ? " The token has been copied to your clipboard!" : ""));
                     });
                 }
             }
@@ -222,7 +187,7 @@ import powerToRole from "../src/power-to-role.js";
         element.appendChild(tokenLastTime);
         element.appendChild(grantAccessTime);
         element.appendChild(doneButton);
-        tokenGeneration.appendChild(element);
+        form.appendChild(element);
     }
 
     function update() {
@@ -236,6 +201,8 @@ import powerToRole from "../src/power-to-role.js";
             window.requestAnimationFrame(update);
         }
     }
+
+    var removeAccess = document.getElementById("remove-access");
 
     function drawProfile() {
         name.innerText = user.userName;
@@ -288,6 +255,23 @@ import powerToRole from "../src/power-to-role.js";
 
         if (havePowerOver) {
             admenControls.style.display = "block";
+
+            removeAccess.onclick = () => {
+                fetch("/delete-user", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        token: data.sessionToken,
+                        username: user.userName
+                    })
+                }).then(e => e.json()).then(e => {
+                    if (e.msg == "valid") {
+                        location.href = "/users";
+                    }
+                });
+            };
         }
     }
 
