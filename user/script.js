@@ -41,6 +41,7 @@ import powerToRole from "../src/power-to-role.js";
     var accessData = document.getElementById("access-data");
     var pfpTitle = document.getElementById("pfp-title");
     var usernameControls = document.getElementById("username-controls");
+    var generateAccessToken = document.getElementById("generate-access-token");
 
     var pfp = document.getElementById("pfp");
     pfp.onerror = function () {
@@ -106,6 +107,12 @@ import powerToRole from "../src/power-to-role.js";
         accessControls.style.width = (nameHolderWidth + 36) + "px";
         accessData.style.width = (nameHolderWidth + 36) + "px";
         usernameControls.style.width = (nameHolderWidth + 36) + "px";
+        generateAccessToken.style.width = (nameHolderWidth + 36) + "px";
+
+        if (data.username == user.userName && user.userRank > 0) {
+            generateAccessToken.style.display = "block";
+            generateAccessToken.style.top = "430px";
+        }
 
         if (!user.accessExpireDate) {
             accessData.style.display = "none";

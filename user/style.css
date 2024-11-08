@@ -76,6 +76,12 @@ html, body {
     height: 96px;
 }
 
+#generate-access-token {
+    top: 760px;
+    height: 96px;
+    display: none;
+}
+
 #username-controls {
     top: 650px;
     height: 96px;
@@ -116,7 +122,7 @@ html, body {
 }
 
 .stat-cell-100 {
-    width: calc(100%);
+    width: calc(100% - 36px);
 }
 
 .stat-cell-50 {
