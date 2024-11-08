@@ -244,6 +244,16 @@ app.get("/user*", (req, res) => {
     }
 });
 
+app.get("/privacy", (req, res) => {
+    res.sendFile(path.join(`${__dirname}/privacy/index.html`));
+});
+
+app.get("/privacy*", (req, res) => {
+    let { url } = req;
+
+    res.sendFile(path.join(`${__dirname}${url}`));
+});
+
 app.get("*", (req, res) => {
     let { url } = req;
 

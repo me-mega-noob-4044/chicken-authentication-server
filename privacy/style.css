@@ -1,0 +1,100 @@
+html, body {
+    padding: 0px;
+    margin: 0px;
+    user-select: none;
+    font-family: "Open Sans";
+    font-weight: 600;
+    background-color: #d8d8d8;
+}
+
+.page-icon {
+    width: 80px;
+    height: 80px;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+.header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 95px;
+    width: 100%;
+    background-color: rgba(143, 172, 169, 0.85);
+    z-index: 100000;
+}
+
+.page-title {
+    font-size: 36px;
+    color: white;
+    font-weight: 900;
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+.blink {
+    animation: blink .75s ease-in-out;
+}
+
+#bg-image {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url("../assets/bg-image-4.png");
+}
+
+#main {
+    position: absolute;
+    top: 95px;
+    left: 0px;
+    width: 100%;
+    height: calc(100% - 20px);
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.group {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 300px);
+    background-color: rgba(169, 201, 197, 0.8);
+    border: 6px solid rgb(108, 131, 129);
+    border-radius: 12px;
+}
+
+.title {
+    position: relative;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    background-color: rgb(108, 131, 129);
+    height: 40px;
+    width: 100%;
+}
+
+.body {
+    padding: 10px;
+    font-weight: 900;
+}
+
+.heading {
+    text-decoration: underline;
+    font-size: 20px;
+}

@@ -21,22 +21,6 @@ function changeBG() {
 
 setInterval(changeBG, 10e3);
 
-document.getElementById("discord-button").onclick = () => {
-    location.href = "https://discord.com/invite/AFYkkKTZq4";
-};
-
 document.getElementById("home").onclick = () => {
     location.href = "/";
-};
-
-document.getElementById("privacy-button").onclick = () => {
-    location.href = "/privacy";
-};
-
-document.getElementById("users-button").onclick = () => {
-    location.href = "/users";
-};
-
-document.getElementById("login-button").onclick = () => {
-    location.href = "/login";
 };
