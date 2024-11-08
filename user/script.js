@@ -85,6 +85,7 @@ import powerToRole from "../src/power-to-role.js";
 
     var darkFadeTransition = document.getElementById("darkFadeTransition");
     var tokenGeneration = document.getElementById("token-generation");
+    var accessTime = document.getElementById("access-time");
 
     function doDarkModeTransition() {
         darkFadeTransition.style.display = "block";
@@ -224,6 +225,18 @@ import powerToRole from "../src/power-to-role.js";
         tokenGeneration.appendChild(element);
     }
 
+    function update() {
+        let time = Math.max(0, user.accessExpireDate - Date.now());
+
+        accessTime.innerHTML = formatTime(time);
+        
+        if (time <= 0) {
+            accessTime.innerHTML = "Access Expired";
+        } else {
+            window.requestAnimationFrame(update);
+        }
+    }
+
     function drawProfile() {
         name.innerText = user.userName;
 
@@ -262,6 +275,8 @@ import powerToRole from "../src/power-to-role.js";
             accessData.style.display = "none";
             accessControls.style.top = "430px";
             usernameControls.style.top = "540px";
+        } else {
+            window.requestAnimationFrame(update);
         }
 
         document.getElementById("kills").innerText = user.userData[0];

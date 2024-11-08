@@ -184,10 +184,21 @@ app.post("/login/validate-access", async (req, res) => {
     res.json({ valid: !!userProfile });
 });
 
+function validateToken(token) {
+    if (!token) return false;
+
+    return Date.now() - token.expireDate <= 0;
+}
+
 app.post("/login/access-token", async (req, res) => {
     let { accessToken, username, id, avatar } = req.body;
 
-    if (accessToken == "12345") { // tmp access token for development purposes
+    let token = await AccessToken.findOne({
+        accessId: accessToken
+    });
+
+    // tmp access token for development purposes
+    if (token && validateToken(token)) {
         let userProfile = await UserProfile.findOne({
             userName: username
         });
@@ -199,17 +210,21 @@ app.post("/login/access-token", async (req, res) => {
             userProfile = new UserProfile({
                 userName: username,
                 userId: id,
-                userAvatar: avatar
+                userAvatar: avatar,
+                accessExpireDate: token.accessGrantTime ? (Date.now() + token.accessGrantTime) : 0
             });
 
             userProfile.sessionToken = generateSessionToken(req);
 
             await userProfile.save();
+            await AccessToken.deleteOne({
+                accessId: accessToken
+            });
 
             res.json({ valid: true, msg: "You have entered a valid access token! The page will refresh, and you'll re-authenticate with Discord to finish the process of gaining access." });
         }
     } else {
-        res.json({ msg: `Attention: The access token '${accessToken}' is invalid` });
+        res.json({ msg: `Attention: The access token '${accessToken.slice(0, 15)}${accessToken.length > 15 ? "..." : ""}' is invalid` });
     }
 });
 
