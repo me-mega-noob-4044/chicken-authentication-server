@@ -21,6 +21,10 @@ const userSchemaProfile = new Schema({
     accessExpireDate: {
         type: Number
     },
+    accessSuspended: {
+        type: Boolean,
+        default: false
+    },
     personalAccessToken: {
         type: String
     },

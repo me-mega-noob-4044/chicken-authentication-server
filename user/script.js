@@ -134,7 +134,7 @@ import powerToRole from "../src/power-to-role.js";
         form.style.display = "flex";
 
         let element = document.createElement("div");
-        element.classList.add("token-generate-form")
+        element.classList.add("token-generate-form");
 
         let title = document.createElement("div");
         title.classList.add("form-title");
@@ -142,12 +142,12 @@ import powerToRole from "../src/power-to-role.js";
 
         let tokenLastTime = document.createElement("input");
         tokenLastTime.type = "text";
-        tokenLastTime.classList.add("form-token-lifespan");
+        tokenLastTime.classList.add("form-input");
         tokenLastTime.placeholder = "Token Lifespan (4d 2s format)";
 
         let grantAccessTime = document.createElement("input");
         grantAccessTime.type = "text";
-        grantAccessTime.classList("form-access-time");
+        grantAccessTime.classList.add("form-access-time");
         grantAccessTime.placeholder = "Access Duration (4d 2s format)";
 
         let doneButton = document.createElement("button");
@@ -190,10 +190,158 @@ import powerToRole from "../src/power-to-role.js";
         form.appendChild(element);
     }
 
+    function manageAccessTime() {
+        form.style.display = "flex";
+
+        let element = document.createElement("div");
+        element.classList.add("token-generate-form");
+        element.style.height = "243.5px";
+
+        let title = document.createElement("div");
+        title.classList.add("form-title");
+        title.innerHTML = "Manage Access Time";
+
+        let duration = document.createElement("input");
+        duration.type = "text";
+        duration.classList.add("form-input");
+        duration.placeholder = "Duration (2d 4s format)";
+
+        let addTime = document.createElement("button");
+        addTime.classList.add("form-finish-button");
+        addTime.innerHTML = "Add Time";
+
+        let subtractTime = document.createElement("button");
+        subtractTime.classList.add("form-finish-button");
+        subtractTime.innerHTML = "Subtract Time";
+
+        let removeLimit = document.createElement("button");
+        removeLimit.classList.add("form-finish-button");
+        removeLimit.innerHTML = "Remove Time Limit";
+
+        addTime.onclick = () => {
+            if (duration.value) {
+                let time = stringToMS(duration.value);
+
+                if (!isNaN(time)) {
+                    fetch("/manage-time/add", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            token: data.sessionToken,
+                            username: user.userName,
+                            time: (time || 0)
+                        })
+                    }).then(e => e.json()).then(e => {
+                        if (e.msg == "valid") {
+                            location.href = location.href;
+                        }
+                    });
+                }
+            }
+        };
+
+        subtractTime.onclick = () => {
+            if (duration.value) {
+                let time = stringToMS(duration.value);
+
+                if (!isNaN(time)) {
+                    fetch("/manage-time/subtract", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            token: data.sessionToken,
+                            username: user.userName,
+                            time: (time || 0)
+                        })
+                    }).then(e => e.json()).then(e => {
+                        if (e.msg == "valid") {
+                            location.href = location.href;
+                        }
+                    });
+                }
+            }
+        };
+
+        removeLimit.onclick = () => {
+            fetch("/manage-time/remove", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    token: data.sessionToken,
+                    username: user.userName
+                })
+            }).then(e => e.json()).then(e => {
+                if (e.msg == "valid") {
+                    location.href = location.href;
+                }
+            });
+        };
+
+        element.appendChild(title);
+        element.appendChild(duration);
+        element.appendChild(addTime);
+        element.appendChild(subtractTime);
+        element.appendChild(removeLimit);
+        form.appendChild(element);
+    }
+
+    function modifyUsername() {
+        form.style.display = "flex";
+
+        let element = document.createElement("div");
+        element.classList.add("token-generate-form");
+        element.style = "height: 123.5px";
+
+        let title = document.createElement("div");
+        title.classList.add("form-title");
+        title.innerHTML = "Change Username";
+
+        let newUsername = document.createElement("input");
+        newUsername.type = "text";
+        newUsername.classList.add("form-input");
+        newUsername.placeholder = "New Username";
+
+        let doneButton = document.createElement("button");
+        doneButton.classList.add("form-finish-button");
+        doneButton.style.marginTop = "0px";
+        doneButton.innerHTML = "Modify";
+
+        doneButton.onclick = () => {
+            if (newUsername.value) {
+                fetch("/change-username", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        token: data.sessionToken,
+                        username: user.userName,
+                        newUserName: newUsername.value
+                    })
+                }).then(e => e.json()).then(e => {
+                    if (e.msg == "valid") {
+                        location.href = `/user/${e.username}`;
+                    }
+                });
+            }
+        };
+
+        element.appendChild(title);
+        element.appendChild(newUsername);
+        element.appendChild(doneButton);
+        form.appendChild(element);
+    }
+
     function update() {
         let time = Math.max(0, user.accessExpireDate - Date.now());
 
-        accessTime.innerHTML = formatTime(time);
+        accessTime.innerHTML = formatTime(time / 1e3);
         
         if (time <= 0) {
             accessTime.innerHTML = "Access Expired";
@@ -203,6 +351,8 @@ import powerToRole from "../src/power-to-role.js";
     }
 
     var removeAccess = document.getElementById("remove-access");
+    var changeUsername = document.getElementById("change-username");
+    var manageTime = document.getElementById("manage-time");
 
     function drawProfile() {
         name.innerText = user.userName;
@@ -271,6 +421,16 @@ import powerToRole from "../src/power-to-role.js";
                         location.href = "/users";
                     }
                 });
+            };
+
+            changeUsername.onclick = () => {
+                doDarkModeTransition();
+                modifyUsername();
+            };
+
+            manageTime.onclick = () => {
+                doDarkModeTransition();
+                manageAccessTime();
             };
         }
     }

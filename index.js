@@ -66,6 +66,7 @@ function validateSessionToken(req, token) {
 // Checks if access isn't expired. Returns true if access is good
 function validateUserAccess(user) {
     if (!user) return false;
+    if (user.accessSuspended) return false;
     if (!user.accessExpireDate) return true;
     if (Date.now() > user.accessExpireDate) return false;
 
@@ -151,6 +152,102 @@ function generateTokenString() {
 app.set("trust proxy", true);
 app.use(express.json());
 
+app.post("/manage-time/add", async (req, res) => {
+    let { username, token, time } = req.body;
+
+    let user = await UserProfile.findOne({
+        sessionToken: token
+    });
+
+    let victim = await UserProfile.findOne({
+        userName: username
+    });
+
+    if (user && victim && validateUserAccess(user) && validateSessionToken(req, token) && user.userRank > victim.userRank) {
+        if (!victim.accessExpireDate) {
+            victim.accessExpireDate = Date.now() + time;
+        } else {
+            victim.accessExpireDate = parseInt(victim.accessExpireDate) + time;
+        }
+
+        await victim.save();
+
+        res.json({ msg: "valid" });
+    } else {
+        res.json({ msg: "Failed" });
+    }
+});
+
+app.post("/manage-time/subtract", async (req, res) => {
+    let { username, token, time } = req.body;
+
+    let user = await UserProfile.findOne({
+        sessionToken: token
+    });
+
+    let victim = await UserProfile.findOne({
+        userName: username
+    });
+
+    if (user && victim && validateUserAccess(user) && validateSessionToken(req, token) && user.userRank > victim.userRank) {
+        if (victim.accessExpireDate) {
+            victim.accessExpireDate = parseInt(victim.accessExpireDate) - time;
+
+            await victim.save();
+
+            res.json({ msg: "valid" });
+        } else {
+            res.json({ msg: "Failed" });
+        }
+    } else {
+        res.json({ msg: "Failed" });
+    }
+});
+
+app.post("/manage-time/remove", async (req, res) => {
+    let { username, token } = req.body;
+
+    let user = await UserProfile.findOne({
+        sessionToken: token
+    });
+
+    let victim = await UserProfile.findOne({
+        userName: username
+    });
+
+    if (user && victim && validateUserAccess(user) && validateSessionToken(req, token) && user.userRank > victim.userRank) {
+        victim.accessExpireDate = 0;
+
+        await victim.save();
+
+        res.json({ msg: "valid" });
+    } else {
+        res.json({ msg: "Failed" });
+    }
+});
+
+app.post("/change-username", async (req, res) => {
+    let { username, token, newUserName } = req.body;
+
+    let user = await UserProfile.findOne({
+        sessionToken: token
+    });
+
+    let victim = await UserProfile.findOne({
+        userName: username
+    });
+
+    if (user && victim && validateUserAccess(user) && validateSessionToken(req, token) && user.userRank > victim.userRank) {
+        victim.userName = newUserName;
+
+        await victim.save();
+
+        res.json({ msg: "valid", username: newUserName });
+    } else {
+        res.json({ msg: "Failed" });
+    }
+});
+
 app.post("/delete-user", async (req, res) => {
     let { username, token } = req.body;
 
@@ -162,7 +259,7 @@ app.post("/delete-user", async (req, res) => {
         userName: username
     });
 
-    if (user && validateUserAccess(user) && validateSessionToken(req, token) && user.userRank > victim.userRank) {
+    if (user && victim && validateUserAccess(user) && validateSessionToken(req, token) && user.userRank > victim.userRank) {
         await UserProfile.deleteOne({
             userName: username
         });
