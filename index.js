@@ -8,6 +8,17 @@ const path = require("path");
 const host = "localhost";
 
 const app = express();
+const server = http.createServer(app);
+
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+app.set("trust proxy", true);
+app.use(express.json());
 
 const importCode = require("./src/import-code");
 const verification = require("./src/verification");
@@ -90,6 +101,26 @@ async function getUsers(req, sessionToken) {
     return users;
 }
 
+const inGameSocket = new WebSocket.Server({ noServer: true });
+
+inGameSocket.on("connection", (ws) => {
+    ws.on("message", async (msg) => {});
+
+    ws.on("close", async () => {});
+});
+
+server.on("upgrade", (request, socket, head) => {
+    const pathName = request.url.split('?')[0];
+
+    if (pathName == "/in-game") {
+        inGameSocket.handleUpgrade(request, socket, head, (ws) => {
+            inGameSocket.emit("connection", ws, request);
+        });
+    } else {
+        socket.destroy();
+    }
+});
+
 app.get("/userData*", async (req, res) => {
     let { sessionToken } = req.query;
 
@@ -148,9 +179,6 @@ function generateTokenString() {
 
     return encoder(result);
 }
-
-app.set("trust proxy", true);
-app.use(express.json());
 
 app.post("/manage-time/add", async (req, res) => {
     let { username, token, time } = req.body;
@@ -248,6 +276,28 @@ app.post("/change-username", async (req, res) => {
     }
 });
 
+app.post("/toggle-access-suspend", async (req, res) => {
+    let { username, token } = req.body;
+
+    let user = await UserProfile.findOne({
+        sessionToken: token
+    });
+
+    let victim = await UserProfile.findOne({
+        userName: username
+    });
+
+    if (user && victim && validateUserAccess(user) && validateSessionToken(req, token) && user.userRank > victim.userRank) {
+        victim.accessSuspended = !victim.accessSuspended;
+
+        await victim.save();
+
+        res.json({ msg: "valid" });
+    } else {
+        res.json({ msg: "Failed" });
+    }
+});
+
 app.post("/delete-user", async (req, res) => {
     let { username, token } = req.body;
 
@@ -255,7 +305,7 @@ app.post("/delete-user", async (req, res) => {
         sessionToken: token
     });
 
-    let victim = UserProfile.findOne({
+    let victim = await UserProfile.findOne({
         userName: username
     });
 
@@ -439,6 +489,43 @@ app.get("/privacy*", (req, res) => {
     res.sendFile(path.join(`${__dirname}${url}`));
 });
 
+app.get("/script-import/get-script*", async (req, res) => {
+    let { data, version } = req.query;
+
+    if (data) {
+        data = JSON.parse(decodeURIComponent(data));
+
+        let user = await UserProfile.findOne({
+            userName: data.username,
+            userId: data.id
+        });
+
+        if (user) {
+            if (user.sessionToken == data.sessionToken) {
+                if (validateSessionToken(req, data.sessionToken)) {
+                    if (validateUserAccess(user, true)) {
+                        importCode(req, res, `src/versions/${version}`);
+                    } else {
+                        console.log("HI :)");
+                        // Reason why it failed
+                    }
+                } else {
+                    console.log("HI :) s");
+                    // Prompt
+                }
+            } else {
+                console.log("HI :) aw");
+                // Say that session token doesn't much please reauth
+            }
+        } else {
+            console.log("HI :) whyy");
+            // Not a user
+        }
+    }
+
+    // console.log(req.query);
+});
+
 app.get("*", (req, res) => {
     let { url } = req;
 
@@ -446,8 +533,17 @@ app.get("*", (req, res) => {
         res.sendFile(path.join(`${__dirname}/homepage/favicon.ico`));
     } else if (url.includes("assets")) {
         res.sendFile(path.join(`${__dirname}${url}`));
+    } else if (url.includes("/script-import/js/")) {
+        importCode(req, res, `src/${url.split("import/")[1]}`);
     } else if (url.includes("src")) {
         res.sendFile(path.join(`${__dirname}${url}`));
+    } else if (url == "/changelog-data") {
+        importCode(req, res, "src/script-data/changelog.js");
+    } else if (url == "/versions") {
+        importCode(req, res, "src/script-data/useable-versions.json");
+    } else if (url.includes("/song-chats")) {
+        const { filePath } = req.query;
+        importCode(req, res, `src/song-chats/${filePath}`, "json");
     } else {
         if (url) {
             res.sendFile(path.join(`${__dirname}/homepage/${url}`));

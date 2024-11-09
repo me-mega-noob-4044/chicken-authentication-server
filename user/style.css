@@ -86,6 +86,11 @@ input, button {
     display: none;
 }
 
+#remove-access-controls {
+    top: 870px;
+    height: 96px;
+}
+
 #username-controls {
     top: 650px;
     height: 96px;

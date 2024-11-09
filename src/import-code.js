@@ -18,5 +18,6 @@ module.exports = async (req, res, pathToFile = "", callback) => {
         return;
     }
 
+    res.setHeader("Content-Type", "application/javascript");
     res.send(code);
 };

@@ -113,6 +113,10 @@ if (localStorage.cached || devauled) {
                 location.href = location.href;
             }
         });
+
+        window.addEventListener("message", (event) => {
+            event.source.postMessage(data, event.origin);
+        });
     }
 
     // Not you button:

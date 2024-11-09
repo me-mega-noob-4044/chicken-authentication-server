@@ -353,6 +353,8 @@ import powerToRole from "../src/power-to-role.js";
     var removeAccess = document.getElementById("remove-access");
     var changeUsername = document.getElementById("change-username");
     var manageTime = document.getElementById("manage-time");
+    var removeAccessControls = document.getElementById("remove-access-controls");
+    var suspendAccess = document.getElementById("suspend-access");
 
     function drawProfile() {
         name.innerText = user.userName;
@@ -377,6 +379,7 @@ import powerToRole from "../src/power-to-role.js";
         accessData.style.width = (nameHolderWidth + 36) + "px";
         usernameControls.style.width = (nameHolderWidth + 36) + "px";
         generateAccessToken.style.width = (nameHolderWidth + 36) + "px";
+        removeAccessControls.style.width = (nameHolderWidth + 36) + "px";
 
         if (data.username == user.userName && user.userRank > 0) {
             generateAccessToken.style.display = "block";
@@ -392,6 +395,7 @@ import powerToRole from "../src/power-to-role.js";
             accessData.style.display = "none";
             accessControls.style.top = "430px";
             usernameControls.style.top = "540px";
+            removeAccessControls.style.top = "650px";
         } else {
             window.requestAnimationFrame(update);
         }
@@ -405,6 +409,33 @@ import powerToRole from "../src/power-to-role.js";
 
         if (havePowerOver) {
             admenControls.style.display = "block";
+
+            if (user.accessSuspended) {
+                changeUsername.classList.remove("stat-cell-green");
+                manageTime.classList.remove("stat-cell-green");
+
+                changeUsername.style.pointerEvents = "none";
+                manageTime.style.pointerEvents = "none";
+
+                document.getElementById("suspend-access-text").innerHTML = "Unsuspend Access";
+            }
+
+            suspendAccess.onclick = () => {
+                fetch("/toggle-access-suspend", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        token: data.sessionToken,
+                        username: user.userName
+                    })
+                }).then(e => e.json()).then(e => {
+                    if (e.msg == "valid") {
+                        location.reload();
+                    }
+                });
+            };
 
             removeAccess.onclick = () => {
                 fetch("/delete-user", {
